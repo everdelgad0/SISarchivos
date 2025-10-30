@@ -1,0 +1,22 @@
+# Entorno virtual
+venv/
+env/
+virt/
+
+# Configuración de Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.db
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de IDE
+.vscode/
+.idea/
+
+# Archivos de entorno (variables secretas)
+.env

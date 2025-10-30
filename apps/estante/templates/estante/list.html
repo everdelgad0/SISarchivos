@@ -1,0 +1,26 @@
+{% extends "base/main.html" %}
+
+{% block content %}
+    {% include "base/navar.html" %}
+    <h1>Estante List</h1>
+    <a class="btn btn-primary" href="{% url 'estante:estante_create' %}">Crear Estante</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in object_list %}
+                <tr>
+                    <td>{{ post.nombre }}</td>
+                    
+                    <td><a class="btn btn-secondary" href="{% url 'estante:estante_update' post.pk %}">Editar</a></td>
+                    <td><a class="btn btn-secondary" href="{% url 'estante:estante_delete' post.pk %}">Borrar</a></td>
+
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% include "base/footer.html" %}
+{% endblock content %}

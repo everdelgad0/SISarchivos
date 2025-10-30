@@ -1,0 +1,12 @@
+{% extends "base/main.html" %}
+{% block content %}
+    <h1>Crear Estante</h1>
+    <form class="form-control" ethod="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Guardar</button>
+    </form>
+    <br/>
+    <a class="btn btn-secondary" href="{% url 'estante:estante_list' %}">Cancelar</a>
+
+{% endblock content %}

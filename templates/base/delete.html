@@ -6,6 +6,6 @@
         {% csrf_token %}
         <p>¿Estás seguro de que deseas eliminar "{{ object }}"?</p>
         <button class="btn btn-danger" type="submit">Confirmar</button>
-        <a class="btn btn-secondary" href="{% url 'home' %}">Cancelar</a>
+        <a class="btn btn-secondary" href="{{ list_url }}">Cancelar</a>
     </form>
 {% endblock content %}

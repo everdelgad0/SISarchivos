@@ -35,12 +35,11 @@ class Estante(models.Model):
         related_name='estantes',
     )
     def __str__(self):
-        return 
-        self.nombre
+        return self.nombre
     class Meta:
         verbose_name = "Estante"
         verbose_name_plural = "Estantes"
-"""
+
 class Archivador(models.Model):
     nombre = models.CharField(
         max_length=100,
@@ -53,7 +52,7 @@ class Archivador(models.Model):
         null=True
     )
     estante = models.ForeignKey(
-        'estante.Estante',
+        'ambiente.Estante',
         on_delete=models.CASCADE,
         related_name='archivadores',
     )
@@ -80,13 +79,13 @@ class Archivo(models.Model):
         null=False
     )
     archivador = models.ForeignKey(
-        'estante.Archivador',
+        'ambiente.Archivador', 
         on_delete=models.CASCADE,
-        related_name='archivos',
+        related_name='archivos'
     )
     def __str__(self):
         return self.nombre
     class Meta:
         verbose_name = "Archivo"
         verbose_name_plural = "Archivos"
-        """
+    

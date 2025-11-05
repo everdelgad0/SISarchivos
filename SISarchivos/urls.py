@@ -16,11 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings # Importar settings
+from django.conf.urls.static import static # Importar static
 from apps.ambiente.views import HomeView
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('admin/', admin.site.urls),
-    path('ambiente/', include('apps.ambiente.urls', namespace='ambiente')),
-    path('estante/', include('apps.ambiente.urls', namespace='estante')),
+    path('sistema/', include('apps.ambiente.urls')),
 ]
+# Configuración para servir archivos de medios en desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

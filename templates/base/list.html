@@ -1,0 +1,33 @@
+{% extends "base/main.html" %}
+{% load app_filters %}
+
+{% block content %}
+    {% include "base/navar.html" %}
+    <h1>Lista de {{ model_name_plural }}</h1>
+    <a class="btn btn-primary" href="{{ create_url }}">Crear {{ model_name }}</a>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                {% for header in headers %}
+                    <th>{{ header|capfirst }}</th>
+                {% endfor %}
+                <th colspan="{% if children_list_url_name %}3{% else %}2{% endif %}">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+                <tr>
+                    {% for field in fields %}
+                        <td>{{ object|get_attribute:field }}</td>
+                    {% endfor %}
+                    {% if children_list_url_name %}
+                    <td><a class="btn btn-info btn-sm" href="{% url children_list_url_name object.pk %}">Ver {{ children_model_name_plural }}</a></td>
+                    {% endif %}
+                    <td><a class="btn btn-warning btn-sm" href="{% url update_url_name object.pk %}">Editar</a></td>
+                    <td><a class="btn btn-danger btn-sm" href="{% url delete_url_name object.pk %}">Borrar</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% include "base/footer.html" %}
+{% endblock content %}

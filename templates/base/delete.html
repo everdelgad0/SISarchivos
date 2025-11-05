@@ -1,0 +1,11 @@
+{% extends "base/main.html" %}
+ 
+{% block content %}
+    <h1>{{ title }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <p>¿Estás seguro de que deseas eliminar "{{ object }}"?</p>
+        <button class="btn btn-danger" type="submit">Confirmar</button>
+        <a class="btn btn-secondary" href="{% url 'home' %}">Cancelar</a>
+    </form>
+{% endblock content %}

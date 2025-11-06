@@ -18,7 +18,13 @@
             {% for object in object_list %}
                 <tr>
                     {% for field in fields %}
-                        <td>{{ object|get_attribute:field }}</td>
+                        <td>
+                            {% if model_name == 'Archivo' and field == 'archivo' and object.archivo %}
+                                <a class="btn btn-info btn-sm" href="{{ object.archivo.url }}" target="_blank">Ver Archivo</a>
+                            {% else %}
+                                {{ object|get_attribute:field }}
+                            {% endif %}
+                        </td>
                     {% endfor %}
                     {% if children_list_url_name %}
                     <td><a class="btn btn-info btn-sm" href="{% url children_list_url_name object.pk %}">Ver {{ children_model_name_plural }}</a></td>

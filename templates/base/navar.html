@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-custom-nav shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-folder-fill me-2 text-warning" viewBox="0 0 16 16">
@@ -10,18 +10,18 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ambiente:ambiente_list' %}">Ambientes</a>
+                    <a class="nav-link {% if 'ambiente_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:ambiente_list' %}">Ambientes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ambiente:estante_list' %}">Estantes</a>
+                    <a class="nav-link {% if 'estante_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:estante_list' %}">Estantes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ambiente:archivador_list' %}">Archivadores</a>
+                    <a class="nav-link {% if 'archivador_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:archivador_list' %}">Archivadores</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ambiente:archivo_list' %}">Archivos</a>
+                    <a class="nav-link {% if 'archivo_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:archivo_list' %}">Archivos</a>
                 </li>
             </ul>
         </div>

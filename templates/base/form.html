@@ -1,12 +1,28 @@
 {% extends "base/main.html" %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-primary" type="submit">Guardar</button>
-    </form>
-    <br/>
-    <a class="btn btn-secondary" href="{{ list_url }}">Cancelar</a>
+<div class="container d-flex flex-column justify-content-center align-items-center" style="flex-grow: 1;">
+    <div class="card shadow-lg" style="width: 100%; max-width: 700px;">
+        <div class="card-header bg-primary bg-gradient text-white d-flex align-items-center">
+            <i class="fas {% if 'Editar' in title %}fa-pencil-alt{% else %}fa-plus{% endif %} me-2"></i>
+            <h4 class="mb-0">{{ title }}</h4>
+        </div>
+        <div class="card-body p-4">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {{ form.as_p }}
+
+                <div class="d-flex justify-content-end mt-4">
+                    <a class="btn btn-secondary me-2" href="{{ list_url }}">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </a>
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-save me-1"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock content %}

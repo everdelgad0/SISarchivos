@@ -7,7 +7,15 @@ from django.urls import reverse_lazy
 # Create your views here.
 class HomeView(TemplateView):
     template_name = 'home.html'
-    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['ambiente_count'] = Ambiente.objects.count()
+        context['estante_count'] = Estante.objects.count()
+        context['archivador_count'] = Archivador.objects.count()
+        context['archivo_count'] = Archivo.objects.count()
+        return context
+
 class AmbienteListView(ListView):
     model = Ambiente
     template_name = 'base/list.html' 

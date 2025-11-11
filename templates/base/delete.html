@@ -1,11 +1,23 @@
 {% extends "base/main.html" %}
  
 {% block content %}
-    <h1>{{ title }}</h1>
-    <form method="post">
-        {% csrf_token %}
-        <p>¿Estás seguro de que deseas eliminar "{{ object }}"?</p>
-        <button class="btn btn-danger" type="submit">Confirmar</button>
-        <a class="btn btn-secondary" href="{{ list_url }}">Cancelar</a>
-    </form>
+<div class="container d-flex flex-column justify-content-center align-items-center" style="flex-grow: 1;">
+    <div class="card shadow-lg text-center border-danger" style="max-width: 500px;">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">{{ title }}</h4>
+        </div>
+        <div class="card-body p-4">
+            <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+            <p class="lead">¿Estás seguro de que deseas eliminar permanentemente?</p>
+            <div class="alert alert-warning">
+                <h3 class="fw-normal">"{{ object }}"</h3>
+            </div>
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <a class="btn btn-secondary" href="{{ list_url }}">Cancelar</a>
+                <button class="btn btn-danger" type="submit">Sí, eliminar</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock content %}

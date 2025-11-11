@@ -20,7 +20,13 @@
                     {% for field in fields %}
                         <td>
                             {% if model_name == 'Archivo' and field == 'archivo' and object.archivo %}
-                                <a class="btn btn-info btn-sm" href="{{ object.archivo.url }}" target="_blank">Ver Archivo</a>
+                                <!-- Botón para abrir la modal -->
+                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#archivoModal-{{ object.pk }}">
+                                    Ver Archivo
+                                </button>
+                            {% elif model_name == 'Archivo' and field == 'archivo' %}
+                                <!-- No hay archivo para mostrar -->
+                                <span>No disponible</span>
                             {% else %}
                                 {{ object|get_attribute:field }}
                             {% endif %}
@@ -35,5 +41,32 @@
             {% endfor %}
         </tbody>
     </table>
+
+    {% if model_name == 'Archivo' %}
+        {% for object in object_list %}
+            {% if object.archivo %}
+            <!-- Modal para cada archivo -->
+            <div class="modal fade" id="archivoModal-{{ object.pk }}" tabindex="-1" aria-labelledby="archivoModalLabel-{{ object.pk }}" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="archivoModalLabel-{{ object.pk }}">{{ object.nombre }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {% if object.archivo|is_image %}
+                                <!-- Si es una imagen, usar <img> con cache busting -->
+                                <img src="{{ object.archivo|bust_cache_url }}" class="img-fluid" style="max-height: 80vh; margin: auto; display: block;" alt="{{ object.nombre }}">
+                            {% else %}
+                                <!-- Para otros archivos (PDFs), usar iframe con cache busting -->
+                                <iframe src="{{ object.archivo|bust_cache_url }}" style="width:100%; height:75vh;" frameborder="0"></iframe>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
     {% include "base/footer.html" %}
 {% endblock content %}

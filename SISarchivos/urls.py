@@ -20,11 +20,14 @@ from django.conf import settings # Importar settings
 from django.conf.urls.static import static # Importar static
 from apps.ambiente.views import HomeView
 
-urlpatterns = [
+urlpatterns = []
+
+# Configuración para servir archivos de medios en desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [
     path('', HomeView.as_view(), name='home'),
     path('admin/', admin.site.urls),
     path('sistema/', include(('apps.ambiente.urls', 'ambiente'), namespace='ambiente')),
 ]
-# Configuración para servir archivos de medios en desarrollo
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

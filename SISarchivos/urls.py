@@ -23,7 +23,7 @@ from apps.ambiente.views import HomeView
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('admin/', admin.site.urls),
-    path('sistema/', include('apps.ambiente.urls')),
+    path('sistema/', include(('apps.ambiente.urls', 'ambiente'), namespace='ambiente')),
 ]
 # Configuración para servir archivos de medios en desarrollo
 if settings.DEBUG:

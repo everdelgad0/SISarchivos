@@ -1,11 +1,10 @@
 from django.urls import path
 from .views import *
 
-urlpatterns = [ 
-    path('ambientes/', AmbienteListView.as_view(), name='ambiente_list'),  
-    path('ambientes/crear/', AmbienteCreateView.as_view(), name='ambiente_create'),
-    path('ambientes/editar/<int:pk>/', AmbienteUpdateView.as_view(), name='ambiente_update'),
-    path('ambientes/borrar/<int:pk>/', AmbienteDeleteView.as_view(), name='ambiente_delete'),
+app_name = 'ambiente'
+
+urlpatterns = [
+    path('search/', SearchResultsView.as_view(), name='search_results'),
 
     path('ambiente/<int:pk>/estantes/', EstanteListView.as_view(), name='estante_list_by_ambiente'), 
     path('estantes/', EstanteListAllView.as_view(), name='estante_list'),
@@ -24,4 +23,9 @@ urlpatterns = [
     path('archivos/crear/', ArchivoCreateView.as_view(), name='archivo_create'),
     path('archivos/editar/<int:pk>/', ArchivoUpdateView.as_view(), name='archivo_update'),
     path('archivos/borrar/<int:pk>/', ArchivoDeleteView.as_view(), name='archivo_delete'),
+
+    path('ambientes/', AmbienteListView.as_view(), name='ambiente_list'),  
+    path('ambientes/crear/', AmbienteCreateView.as_view(), name='ambiente_create'),
+    path('ambientes/editar/<int:pk>/', AmbienteUpdateView.as_view(), name='ambiente_update'),
+    path('ambientes/borrar/<int:pk>/', AmbienteDeleteView.as_view(), name='ambiente_delete'),
 ]

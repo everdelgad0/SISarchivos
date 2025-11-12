@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
+from django.template.loader import get_template
+from django.db.models import Q
 from .models import *
 from .forms import *
 from django.urls import reverse_lazy
@@ -16,6 +18,29 @@ class HomeView(TemplateView):
         context['archivo_count'] = Archivo.objects.count()
         return context
 
+class SearchResultsView(TemplateView):
+    template_name = 'base/search_results.html'
+
+    def get(self, request, *args, **kwargs):
+        get_template('base/search_results.html').render()
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('q')
+        context['query'] = query
+        if query:
+            
+            search_filter = Q(nombre__icontains=query)
+            context['ambientes'] = Ambiente.objects.filter(search_filter)
+            context['estantes'] = Estante.objects.filter(search_filter)
+            context['archivadores'] = Archivador.objects.filter(search_filter)
+            context['archivos'] = Archivo.objects.filter(search_filter)
+            context['has_results'] = (context['ambientes'].exists() or context['estantes'].exists() or 
+                                       context['archivadores'].exists() or context['archivos'].exists())
+        return context
+
+
 class AmbienteListView(ListView):
     model = Ambiente
     template_name = 'base/list.html' 
@@ -28,10 +53,10 @@ class AmbienteListView(ListView):
         context['model_name_plural'] = 'Ambientes'
         context['headers'] = ['nombre', 'descripción']
         context['fields'] = ['nombre', 'descripcion']
-        context['create_url'] = reverse_lazy('ambiente:ambiente_create') # Mismo namespace
-        context['update_url_name'] = 'ambiente:ambiente_update' # Mismo namespace
-        context['delete_url_name'] = 'ambiente:ambiente_delete' # Mismo namespace
-        context['children_list_url_name'] = 'ambiente:estante_list_by_ambiente' # Nuevo nombre de ruta
+        context['create_url'] = reverse_lazy('ambiente:ambiente_create')
+        context['update_url_name'] = 'ambiente:ambiente_update' 
+        context['delete_url_name'] = 'ambiente:ambiente_delete' 
+        context['children_list_url_name'] = 'ambiente:estante_list_by_ambiente' 
         context['children_model_name_plural'] = 'Estantes'
         return context
 
@@ -84,8 +109,8 @@ class EstanteListAllView(ListView):
         context['create_url'] = reverse_lazy('ambiente:estante_create')
         context['update_url_name'] = 'ambiente:estante_update'
         context['delete_url_name'] = 'ambiente:estante_delete'
-        context['children_list_url_name'] = 'ambiente:archivador_list_by_estante' # Añadido
-        context['children_model_name_plural'] = 'Archivadores' # Añadido
+        context['children_list_url_name'] = 'ambiente:archivador_list_by_estante' 
+        context['children_model_name_plural'] = 'Archivadores' 
         return context
 
 class EstanteListView(ListView):
@@ -118,12 +143,10 @@ class EstanteCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Crear Estante'
-        # No podemos saber a qué lista volver, así que volvemos al inicio.
         context['list_url'] = reverse_lazy('ambiente:ambiente_list')
         return context
 
     def get_success_url(self):
-        # Redirige a la lista de estantes del ambiente al que pertenece el nuevo estante.
         return reverse_lazy('ambiente:estante_list_by_ambiente', kwargs={'pk': self.object.ambiente.pk})
 
 class EstanteUpdateView(UpdateView):
@@ -189,8 +212,8 @@ class ArchivadorListAllView(ListView):
         context['create_url'] = reverse_lazy('ambiente:archivador_create')
         context['update_url_name'] = 'ambiente:archivador_update'
         context['delete_url_name'] = 'ambiente:archivador_delete'
-        context['children_list_url_name'] = 'ambiente:archivo_list_by_archivador' # Añadido
-        context['children_model_name_plural'] = 'Archivos' # Añadido
+        context['children_list_url_name'] = 'ambiente:archivo_list_by_archivador' 
+        context['children_model_name_plural'] = 'Archivos' 
         return context
 
 class ArchivadorCreateView(CreateView):

@@ -10,7 +10,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link {% if 'ambiente_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:ambiente_list' %}">Ambientes</a>
                 </li>
@@ -24,6 +24,10 @@
                     <a class="nav-link {% if 'archivo_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:archivo_list' %}">Archivos</a>
                 </li>
             </ul>
+            <form class="d-flex ms-lg-3" role="search" method="get" action="{% url 'ambiente:search_results' %}">
+                <input class="form-control me-2" type="search" name="q" placeholder="Buscar..." aria-label="Search" value="{{ request.GET.q }}">
+                <button class="btn btn-outline-light" type="submit">Buscar</button>
+            </form>
         </div>
     </div>
 </nav>

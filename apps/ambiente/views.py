@@ -21,10 +21,6 @@ class HomeView(TemplateView):
 class SearchResultsView(TemplateView):
     template_name = 'base/search_results.html'
 
-    def get(self, request, *args, **kwargs):
-        get_template('base/search_results.html').render()
-        return super().get(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         query = self.request.GET.get('q')

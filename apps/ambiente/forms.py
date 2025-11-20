@@ -1,42 +1,43 @@
 from django import forms
 from .models import *
 
-class AmbienteForm(forms.ModelForm):
+class BaseForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class AmbienteForm(BaseForm):
     class Meta:
         model = Ambiente
         fields = '__all__'
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
 
-class EstanteForm(forms.ModelForm):
+class EstanteForm(BaseForm):
     class Meta:
         model = Estante
-        fields = '__all__'
+        fields = ['nombre', 'descripcion']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
-
-class ArchivadorForm(forms.ModelForm): 
+class EstanteGeneralForm(BaseForm):
+    class Meta:
+        model = Estante
+        fields = ['nombre', 'descripcion', 'ambiente']
+    
+class ArchivadorForm(BaseForm):
     class Meta:
         model = Archivador
-        fields = '__all__'
+        fields = ['nombre', 'descripcion']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
+class ArchivadorGeneralForm(BaseForm):
+    class Meta:
+        model = Archivador
+        fields = ['nombre', 'descripcion', 'estante']
 
-class ArchivoForm(forms.ModelForm): 
+class ArchivoForm(BaseForm):
     class Meta:
         model = Archivo
-        fields = '__all__'
+        fields = ['nombre', 'descripcion', 'archivo']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
+class ArchivoGeneralForm(BaseForm):
+    class Meta:
+        model = Archivo
+        fields = ['nombre', 'descripcion', 'archivo', 'archivador']

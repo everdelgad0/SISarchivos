@@ -24,6 +24,7 @@ urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('admin/', admin.site.urls),
     path('sistema/', include(('apps.ambiente.urls', 'ambiente'), namespace='ambiente')),
+    path('users/', include(('apps.users.urls', 'users'), namespace='users')),
 ]
 
 # Configuración para servir archivos de medios en desarrollo

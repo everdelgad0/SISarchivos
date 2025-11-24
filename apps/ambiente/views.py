@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
 from django.template.loader import get_template
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from .models import *
 from .forms import *
@@ -37,7 +38,7 @@ class SearchResultsView(TemplateView):
         return context
 
 
-class AmbienteListView(ListView):
+class AmbienteListView(LoginRequiredMixin, ListView):
     model = Ambiente
     template_name = 'base/list.html' 
     paginate_by = 10 
@@ -58,7 +59,7 @@ class AmbienteListView(ListView):
         context['children_model_name_plural'] = 'Estantes'
         return context
 
-class AmbienteDetailView(DetailView):
+class AmbienteDetailView(LoginRequiredMixin, DetailView):
     model = Ambiente
     template_name = 'base/detail.html'
 
@@ -86,7 +87,7 @@ class AmbienteDetailView(DetailView):
         ]
         return context
 
-class AmbienteCreateView(CreateView):
+class AmbienteCreateView(LoginRequiredMixin, CreateView):
     template_name = 'base/form.html' 
     form_class = AmbienteForm
 
@@ -100,7 +101,7 @@ class AmbienteCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('ambiente:ambiente_list')
 
-class AmbienteUpdateView(UpdateView):
+class AmbienteUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'base/form.html' 
     form_class = AmbienteForm
     model = Ambiente
@@ -115,7 +116,7 @@ class AmbienteUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('ambiente:ambiente_detail', kwargs={'pk': self.object.pk})
 
-class AmbienteDeleteView(DeleteView):
+class AmbienteDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'base/delete.html'
     model = Ambiente
 
@@ -129,7 +130,7 @@ class AmbienteDeleteView(DeleteView):
     def get_success_url(self):
         return reverse_lazy('ambiente:ambiente_list')
 
-class EstanteListAllView(ListView):
+class EstanteListAllView(LoginRequiredMixin, ListView):
     model = Estante
     template_name = 'base/list.html'
     paginate_by = 10
@@ -151,7 +152,7 @@ class EstanteListAllView(ListView):
         context['parent_model_name'] = 'ambiente' 
         return context
 
-class EstanteDetailView(DetailView):
+class EstanteDetailView(LoginRequiredMixin, DetailView):
     model = Estante
     template_name = 'base/detail.html'
 
@@ -179,7 +180,7 @@ class EstanteDetailView(DetailView):
         ]
         return context
 
-class EstanteListView(ListView):
+class EstanteListView(LoginRequiredMixin, ListView):
     model = Estante
     template_name = 'base/list.html' 
     paginate_by = 10 
@@ -207,7 +208,7 @@ class EstanteListView(ListView):
         return super().get_queryset().filter(ambiente__id=self.kwargs['pk'])
         
 
-class EstanteCreateView(CreateView):
+class EstanteCreateView(LoginRequiredMixin, CreateView):
     model = Estante
     template_name = 'base/form.html' 
 
@@ -238,7 +239,7 @@ class EstanteCreateView(CreateView):
             form.instance.ambiente = ambiente
         return super().form_valid(form)
 
-class EstanteUpdateView(UpdateView):
+class EstanteUpdateView(LoginRequiredMixin, UpdateView):
     model = Estante
     form_class = EstanteForm
     template_name = 'base/form.html' 
@@ -253,7 +254,7 @@ class EstanteUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('ambiente:estante_detail', kwargs={'pk': self.object.pk})
 
-class EstanteDeleteView(DeleteView):
+class EstanteDeleteView(LoginRequiredMixin, DeleteView):
     model = Estante
     template_name = 'base/delete.html' 
     
@@ -267,7 +268,7 @@ class EstanteDeleteView(DeleteView):
     def get_success_url(self):
         return reverse_lazy('ambiente:ambiente_detail', kwargs={'pk': self.object.ambiente.pk})
 
-class ArchivadorListView(ListView):
+class ArchivadorListView(LoginRequiredMixin, ListView):
     model = Archivador
     template_name = 'base/list.html'
     paginate_by = 10
@@ -293,7 +294,7 @@ class ArchivadorListView(ListView):
     def get_queryset(self):
         return super().get_queryset().filter(estante__id=self.kwargs['pk'])
 
-class ArchivadorDetailView(DetailView):
+class ArchivadorDetailView(LoginRequiredMixin, DetailView):
     model = Archivador
     template_name = 'base/detail.html'
 
@@ -324,7 +325,7 @@ class ArchivadorDetailView(DetailView):
         ]
         return context
 
-class ArchivadorListAllView(ListView):
+class ArchivadorListAllView(LoginRequiredMixin, ListView):
     model = Archivador
     template_name = 'base/list.html'
     paginate_by = 10
@@ -345,7 +346,7 @@ class ArchivadorListAllView(ListView):
         context['children_model_name_plural'] = 'Archivos' 
         return context
 
-class ArchivadorCreateView(CreateView):
+class ArchivadorCreateView(LoginRequiredMixin, CreateView):
     model = Archivador
     template_name = 'base/form.html'
 
@@ -376,7 +377,7 @@ class ArchivadorCreateView(CreateView):
             form.instance.estante = estante
         return super().form_valid(form)
 
-class ArchivadorUpdateView(UpdateView):
+class ArchivadorUpdateView(LoginRequiredMixin, UpdateView):
     model = Archivador
     form_class = ArchivadorForm 
     template_name = 'base/form.html'
@@ -391,7 +392,7 @@ class ArchivadorUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('ambiente:archivador_detail', kwargs={'pk': self.object.pk})
 
-class ArchivadorDeleteView(DeleteView):
+class ArchivadorDeleteView(LoginRequiredMixin, DeleteView):
     model = Archivador
     template_name = 'base/delete.html' 
 
@@ -405,7 +406,7 @@ class ArchivadorDeleteView(DeleteView):
     def get_success_url(self):
         return reverse_lazy('ambiente:estante_detail', kwargs={'pk': self.object.estante.pk})
 
-class ArchivoListAllView(ListView):
+class ArchivoListAllView(LoginRequiredMixin, ListView):
     model = Archivo
     template_name = 'base/list.html'
     paginate_by = 10
@@ -424,7 +425,7 @@ class ArchivoListAllView(ListView):
         context['delete_url_name'] = 'ambiente:archivo_delete'
         return context
 
-class ArchivoListView(ListView):
+class ArchivoListView(LoginRequiredMixin, ListView):
     model = Archivo
     template_name = 'base/list.html'
     paginate_by = 10
@@ -448,7 +449,7 @@ class ArchivoListView(ListView):
     def get_queryset(self):
         return super().get_queryset().filter(archivador__id=self.kwargs['pk'])
 
-class ArchivoDetailView(DetailView):
+class ArchivoDetailView(LoginRequiredMixin, DetailView):
     model = Archivo
     template_name = 'base/detail.html'
 
@@ -472,7 +473,7 @@ class ArchivoDetailView(DetailView):
         ]
         return context
 
-class ArchivoCreateView(CreateView):
+class ArchivoCreateView(LoginRequiredMixin, CreateView):
     model = Archivo
     template_name = 'base/form.html'
 
@@ -503,7 +504,7 @@ class ArchivoCreateView(CreateView):
             form.instance.archivador = archivador
         return super().form_valid(form)
 
-class ArchivoUpdateView(UpdateView):
+class ArchivoUpdateView(LoginRequiredMixin, UpdateView):
     model = Archivo
     form_class = ArchivoForm
     template_name = 'base/form.html'
@@ -518,7 +519,7 @@ class ArchivoUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('ambiente:archivo_detail', kwargs={'pk': self.object.pk})
 
-class ArchivoDeleteView(DeleteView):
+class ArchivoDeleteView(LoginRequiredMixin, DeleteView):
     model = Archivo
     template_name = 'base/delete.html'
 

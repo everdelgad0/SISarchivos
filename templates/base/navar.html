@@ -10,24 +10,58 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link {% if 'ambiente_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:ambiente_list' %}">Ambientes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if 'estante_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:estante_list' %}">Estantes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if 'archivador_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:archivador_list' %}">Archivadores</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if 'archivo_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:archivo_list' %}">Archivos</a>
-                </li>
-            </ul>
-            <form class="d-flex ms-lg-3" role="search" method="get" action="{% url 'ambiente:search_results' %}">
-                <input class="form-control me-2" type="search" name="q" placeholder="Buscar..." aria-label="Search" value="{{ request.GET.q }}">
-                <button class="btn btn-outline-light" type="submit">Buscar</button>
-            </form>
+            <!-- Este elemento empuja todo lo demás a la derecha -->
+            <div class="me-auto"></div>
+
+            <!-- Elementos de la derecha -->
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
+                    <!-- Enlaces de navegación principal -->
+                    <ul class="navbar-nav me-3">
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'ambiente_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:ambiente_list' %}">Ambientes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'estante_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:estante_list' %}">Estantes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'archivador_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:archivador_list' %}">Archivadores</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'archivo_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:archivo_list' %}">Archivos</a>
+                        </li>
+                    </ul>
+
+                    <!-- Buscador -->
+                    <form class="d-flex me-3" role="search" method="get" action="{% url 'ambiente:search_results' %}">
+                        <input class="form-control me-2" type="search" name="q" placeholder="Buscar..." aria-label="Search" value="{{ request.GET.q }}">
+                        <button class="btn btn-outline-light" type="submit">Buscar</button>
+                    </form>
+                {% endif %}
+
+                <!-- Sección de Autenticación de Usuario -->
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="navbarUserDropdown">
+                                <li>
+                                    <form action="{% url 'users:logout' %}" method="post" class="d-inline w-100">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-sign-out-alt fa-fw me-2"></i>Cerrar Sesión
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a class="btn btn-outline-light" href="{% url 'users:login' %}"><i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión</a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </nav>

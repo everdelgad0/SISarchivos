@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from decouple import config, Csv
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.ambiente',
+    'apps.users',
     # 'apps.estante', # Comentado porque Estante, Archivador y Archivo se gestionan dentro de la app 'ambiente'
 ]
 
@@ -132,3 +134,14 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+LOGIN_REDIRECT_URL = reverse_lazy('users:home')
+LOGIN_URL = reverse_lazy('users:login')
+LOGOUT_URL = reverse_lazy('users:logout')
+LOGOUT_REDIRECT_URL = reverse_lazy('users:login')
+
+#EMAIL_USE_TLS = True
+#EMAIL_HOST = smpt.gmail.com
+#EMAIL_HOST_USER = config('EMAIL_HOST_USER',cast=str)
+#EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD',cast=str)
+#EMAIL_PORT = 587

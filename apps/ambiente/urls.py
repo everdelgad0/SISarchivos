@@ -1,13 +1,12 @@
 from django.urls import path
 from .views import *
-# from . import views # Eliminamos esta importación duplicada
 
 app_name = 'ambiente'
 
 urlpatterns = [
     path('search/', SearchResultsView.as_view(), name='search_results'),
 
-    # URLs para Estante
+    # urls para estante
     path('ambiente/<int:pk>/estantes/', EstanteListView.as_view(), name='estante_list_by_ambiente'), 
     path('estantes/<int:pk>/', EstanteDetailView.as_view(), name='estante_detail'),
     path('estantes/', EstanteListAllView.as_view(), name='estante_list'),
@@ -16,14 +15,14 @@ urlpatterns = [
     path('estantes/editar/<int:pk>/', EstanteUpdateView.as_view(), name='estante_update'),
     path('estantes/borrar/<int:pk>/', EstanteDeleteView.as_view(), name='estante_delete'),
 
-    # URLs para Ambiente
+    # urls para ambiente
     path('ambientes/', AmbienteListView.as_view(), name='ambiente_list'),  
     path('ambientes/<int:pk>/', AmbienteDetailView.as_view(), name='ambiente_detail'),
     path('ambientes/crear/', AmbienteCreateView.as_view(), name='ambiente_create'),
     path('ambientes/editar/<int:pk>/', AmbienteUpdateView.as_view(), name='ambiente_update'),
     path('ambientes/borrar/<int:pk>/', AmbienteDeleteView.as_view(), name='ambiente_delete'),
 
-    # URLs para Archivador
+    # urls para archivador
     path('estante/<int:pk>/archivadores/', ArchivadorListView.as_view(), name='archivador_list_by_estante'), 
     path('archivadores/<int:pk>/', ArchivadorDetailView.as_view(), name='archivador_detail'),
     path('archivadores/', ArchivadorListAllView.as_view(), name='archivador_list'),
@@ -32,7 +31,7 @@ urlpatterns = [
     path('archivadores/editar/<int:pk>/', ArchivadorUpdateView.as_view(), name='archivador_update'),
     path('archivadores/borrar/<int:pk>/', ArchivadorDeleteView.as_view(), name='archivador_delete'),
 
-    # URLs para Archivo 
+    # urls para archivo 
     path('archivador/<int:pk>/archivos/', ArchivoListView.as_view(), name='archivo_list_by_archivador'), 
     path('archivos/<int:pk>/', ArchivoDetailView.as_view(), name='archivo_detail'),
     path('archivos/', ArchivoListAllView.as_view(), name='archivo_list'),

@@ -69,8 +69,6 @@ class AmbienteDetailView(DetailView):
         context['list_url'] = reverse_lazy('ambiente:ambiente_list')
         context['update_url_name'] = 'ambiente:ambiente_update'
         context['delete_url_name'] = 'ambiente:ambiente_delete'
-        
-        # Contexto para la lista de hijos (Estantes)
         context['estante_count'] = self.object.estantes.count()
         context['children'] = self.object.estantes.all()
         context['child_model_name'] = 'Estante'
@@ -165,8 +163,6 @@ class EstanteDetailView(DetailView):
         context['parent'] = self.object.ambiente
         context['update_url_name'] = 'ambiente:estante_update'
         context['delete_url_name'] = 'ambiente:estante_delete'
-
-        # Contexto para la lista de hijos (Archivadores)
         context['children'] = self.object.archivadores.all()
         context['archivador_count'] = self.object.archivadores.count()
         context['child_model_name'] = 'Archivador'
@@ -177,8 +173,6 @@ class EstanteDetailView(DetailView):
         context['child_update_url_name'] = 'ambiente:archivador_update'
         context['child_delete_url_name'] = 'ambiente:archivador_delete'
         context['child_create_url'] = reverse_lazy('ambiente:archivador_create', kwargs={'estante_pk': self.object.pk})
-
-        # Breadcrumbs
         context['breadcrumbs'] = [
             {'name': self.object.ambiente.nombre, 'url': reverse_lazy('ambiente:ambiente_detail', kwargs={'pk': self.object.ambiente.pk})},
             {'name': self.object.nombre, 'active': True}
@@ -257,7 +251,6 @@ class EstanteUpdateView(UpdateView):
         return context
 
     def get_success_url(self):
-        # Redirige al detalle del estante que se acaba de editar.
         return reverse_lazy('ambiente:estante_detail', kwargs={'pk': self.object.pk})
 
 class EstanteDeleteView(DeleteView):
@@ -272,7 +265,6 @@ class EstanteDeleteView(DeleteView):
         return context
 
     def get_success_url(self):
-        # Después de borrar, redirige al detalle del ambiente padre.
         return reverse_lazy('ambiente:ambiente_detail', kwargs={'pk': self.object.ambiente.pk})
 
 class ArchivadorListView(ListView):
@@ -313,8 +305,6 @@ class ArchivadorDetailView(DetailView):
         context['parent'] = self.object.estante
         context['update_url_name'] = 'ambiente:archivador_update'
         context['delete_url_name'] = 'ambiente:archivador_delete'
-
-        # Contexto para la lista de hijos (Archivos)
         context['children'] = self.object.archivos.all()
         context['archivo_count'] = self.object.archivos.count()
         context['child_model_name'] = 'Archivo'
@@ -325,8 +315,6 @@ class ArchivadorDetailView(DetailView):
         context['child_update_url_name'] = 'ambiente:archivo_update'
         context['child_delete_url_name'] = 'ambiente:archivo_delete'
         context['child_create_url'] = reverse_lazy('ambiente:archivo_create', kwargs={'archivador_pk': self.object.pk})
-
-        # Breadcrumbs
         ambiente = self.object.estante.ambiente
         estante = self.object.estante
         context['breadcrumbs'] = [
@@ -401,7 +389,6 @@ class ArchivadorUpdateView(UpdateView):
         return context
 
     def get_success_url(self):
-        # Redirige al detalle del archivador que se acaba de editar.
         return reverse_lazy('ambiente:archivador_detail', kwargs={'pk': self.object.pk})
 
 class ArchivadorDeleteView(DeleteView):
@@ -416,7 +403,6 @@ class ArchivadorDeleteView(DeleteView):
         return context
 
     def get_success_url(self):
-        # Después de borrar, redirige al detalle del estante padre.
         return reverse_lazy('ambiente:estante_detail', kwargs={'pk': self.object.estante.pk})
 
 class ArchivoListAllView(ListView):
@@ -474,9 +460,7 @@ class ArchivoDetailView(DetailView):
         context['parent'] = self.object.archivador
         context['update_url_name'] = 'ambiente:archivo_update'
         context['delete_url_name'] = 'ambiente:archivo_delete'
-        context['is_file_detail'] = True # Flag para la plantilla
-
-        # Breadcrumbs
+        context['is_file_detail'] = True 
         archivador = self.object.archivador
         estante = archivador.estante
         ambiente = estante.ambiente
@@ -532,7 +516,6 @@ class ArchivoUpdateView(UpdateView):
         return context
 
     def get_success_url(self):
-        # Redirige al detalle del archivo que se acaba de editar.
         return reverse_lazy('ambiente:archivo_detail', kwargs={'pk': self.object.pk})
 
 class ArchivoDeleteView(DeleteView):
@@ -547,5 +530,4 @@ class ArchivoDeleteView(DeleteView):
         return context
 
     def get_success_url(self):
-        # Después de borrar, redirige al detalle del archivador padre.
         return reverse_lazy('ambiente:archivador_detail', kwargs={'pk': self.object.archivador.pk})

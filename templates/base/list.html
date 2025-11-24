@@ -33,8 +33,10 @@
                                 <tr>
                                     {% for field in fields %}
                                         <td>
-                                            {% if forloop.first and children_list_url_name %}
-                                                <a href="{% url children_list_url_name object.pk %}" class="fw-bold text-decoration-none">{{ object|get_attribute:field }}</a>
+                                            {% if forloop.first and detail_url_name %}
+                                                <a href="{% url detail_url_name object.pk %}" class="fw-bold text-decoration-none text-primary-hover">{{ object|get_attribute:field }}</a>
+                                            {% elif forloop.first and children_list_url_name %}
+                                                <a href="{% url children_list_url_name object.pk %}" class="fw-bold text-decoration-none text-primary-hover">{{ object|get_attribute:field }}</a>
                                             {% elif forloop.first %}
                                                 <span class="fw-bold">{{ object|get_attribute:field }}</span>
                                             {% elif model_name == 'Archivo' and field == 'archivo' and object.archivo %}
@@ -43,26 +45,20 @@
                                                 </button>
                                             {% elif model_name == 'Archivo' and field == 'archivo' %}
                                                 <small class="text-muted">No disponible</small>
-                                            {% elif field == 'ambiente' %}
-                                                <a href="{% url 'ambiente:estante_list_by_ambiente' pk=object.ambiente.pk %}" class="text-decoration-none">
-                                                    {{ object|get_attribute:field|default_if_none:"" }}
-                                                </a>
-                                            {% elif field == 'estante' %}
-                                                <a href="{% url 'ambiente:archivador_list_by_estante' pk=object.estante.pk %}" class="text-decoration-none">
-                                                    {{ object|get_attribute:field|get_full_path|default_if_none:"" }}
-                                                </a>
-                                            {% elif field == 'archivador' %}
-                                                <a href="{% url 'ambiente:archivo_list_by_archivador' pk=object.archivador.pk %}" class="text-decoration-none">
-                                                    {{ object|get_attribute:field|get_full_path|default_if_none:"" }}
-                                                </a>
+                                            {% elif field == 'ambiente' or field == 'estante' or field == 'archivador' and object|get_attribute:field %}
+                                                {{ object|get_full_path }}
                                             {% else %}
                                                 <small class="text-muted">{{ object|get_attribute:field|default_if_none:"" }}</small> 
                                             {% endif %}
                                         </td>
                                     {% endfor %}
                                     <td class="text-end">
-                                        <a class="btn btn-outline-warning btn-sm" href="{% url update_url_name object.pk %}" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-                                        <a class="btn btn-outline-danger btn-sm" href="{% url delete_url_name object.pk %}" title="Borrar"><i class="fas fa-trash-alt"></i></a>
+                                        <a href="{% url update_url_name object.pk %}" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-edit me-1"></i> Editar
+                                        </a>
+                                        <a href="{% url delete_url_name object.pk %}" class="btn btn-danger btn-sm ms-2">
+                                            <i class="fas fa-trash-alt me-1"></i> Borrar
+                                        </a>
                                     </td>
                                 </tr>
                             {% endfor %}

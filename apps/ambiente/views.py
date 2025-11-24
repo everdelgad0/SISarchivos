@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
 from django.template.loader import get_template
 from django.db.models import Q
 from .models import *
@@ -49,7 +49,8 @@ class AmbienteListView(ListView):
         context['model_name'] = 'Ambiente'
         context['model_name_plural'] = 'Ambientes'
         context['headers'] = ['nombre', 'descripción']
-        context['fields'] = ['nombre', 'descripcion']
+        context['fields'] = ['nombre', 'descripcion'] 
+        context['detail_url_name'] = 'ambiente:ambiente_detail'
         context['create_url'] = reverse_lazy('ambiente:ambiente_create')
         context['update_url_name'] = 'ambiente:ambiente_update' 
         context['delete_url_name'] = 'ambiente:ambiente_delete' 
@@ -57,10 +58,39 @@ class AmbienteListView(ListView):
         context['children_model_name_plural'] = 'Estantes'
         return context
 
+class AmbienteDetailView(DetailView):
+    model = Ambiente
+    template_name = 'base/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['active_nav'] = 'ambientes'
+        context['title'] = f'Detalle de Ambiente: {self.object.nombre}'
+        context['list_url'] = reverse_lazy('ambiente:ambiente_list')
+        context['update_url_name'] = 'ambiente:ambiente_update'
+        context['delete_url_name'] = 'ambiente:ambiente_delete'
+        
+        # Contexto para la lista de hijos (Estantes)
+        context['estante_count'] = self.object.estantes.count()
+        context['children'] = self.object.estantes.all()
+        context['child_model_name'] = 'Estante'
+        context['child_model_name_plural'] = 'Estantes'
+        context['child_headers'] = ['nombre', 'descripción']
+        context['child_fields'] = ['nombre', 'descripcion']
+        context['child_detail_url_name'] = 'ambiente:estante_detail'
+        context['child_update_url_name'] = 'ambiente:estante_update'
+        context['child_delete_url_name'] = 'ambiente:estante_delete'
+        context['child_create_url'] = reverse_lazy('ambiente:estante_create', kwargs={'ambiente_pk': self.object.pk})
+
+        # Breadcrumbs
+        context['breadcrumbs'] = [
+            {'name': self.object.nombre, 'active': True}
+        ]
+        return context
+
 class AmbienteCreateView(CreateView):
     template_name = 'base/form.html' 
     form_class = AmbienteForm
-    success_url = reverse_lazy('ambiente:ambiente_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -69,10 +99,12 @@ class AmbienteCreateView(CreateView):
         context['list_url'] = reverse_lazy('ambiente:ambiente_list')
         return context
 
+    def get_success_url(self):
+        return reverse_lazy('ambiente:ambiente_list')
+
 class AmbienteUpdateView(UpdateView):
     template_name = 'base/form.html' 
     form_class = AmbienteForm
-    success_url = reverse_lazy('ambiente:ambiente_list')
     model = Ambiente
 
     def get_context_data(self, **kwargs):
@@ -82,10 +114,12 @@ class AmbienteUpdateView(UpdateView):
         context['list_url'] = reverse_lazy('ambiente:ambiente_list')
         return context
 
+    def get_success_url(self):
+        return reverse_lazy('ambiente:ambiente_detail', kwargs={'pk': self.object.pk})
+
 class AmbienteDeleteView(DeleteView):
     template_name = 'base/delete.html'
     model = Ambiente
-    success_url = reverse_lazy('ambiente:ambiente_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -93,6 +127,9 @@ class AmbienteDeleteView(DeleteView):
         context['title'] = 'Borrar Ambiente'
         context['list_url'] = reverse_lazy('ambiente:ambiente_list')
         return context
+
+    def get_success_url(self):
+        return reverse_lazy('ambiente:ambiente_list')
 
 class EstanteListAllView(ListView):
     model = Estante
@@ -107,12 +144,45 @@ class EstanteListAllView(ListView):
         context['model_name_plural'] = 'Estantes'
         context['headers'] = ['nombre', 'ambiente']
         context['fields'] = ['nombre', 'ambiente']
+        context['detail_url_name'] = 'ambiente:estante_detail'
         context['create_url'] = reverse_lazy('ambiente:estante_create_general')
         context['update_url_name'] = 'ambiente:estante_update'
         context['delete_url_name'] = 'ambiente:estante_delete'
         context['children_list_url_name'] = 'ambiente:archivador_list_by_estante' 
         context['children_model_name_plural'] = 'Archivadores' 
         context['parent_model_name'] = 'ambiente' 
+        return context
+
+class EstanteDetailView(DetailView):
+    model = Estante
+    template_name = 'base/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['active_nav'] = 'estantes'
+        context['title'] = f'Detalle de Estante: {self.object.nombre}'
+        context['list_url'] = reverse_lazy('ambiente:ambiente_detail', kwargs={'pk': self.object.ambiente.pk})
+        context['parent'] = self.object.ambiente
+        context['update_url_name'] = 'ambiente:estante_update'
+        context['delete_url_name'] = 'ambiente:estante_delete'
+
+        # Contexto para la lista de hijos (Archivadores)
+        context['children'] = self.object.archivadores.all()
+        context['archivador_count'] = self.object.archivadores.count()
+        context['child_model_name'] = 'Archivador'
+        context['child_model_name_plural'] = 'Archivadores'
+        context['child_headers'] = ['nombre', 'descripción']
+        context['child_fields'] = ['nombre', 'descripcion']
+        context['child_detail_url_name'] = 'ambiente:archivador_detail'
+        context['child_update_url_name'] = 'ambiente:archivador_update'
+        context['child_delete_url_name'] = 'ambiente:archivador_delete'
+        context['child_create_url'] = reverse_lazy('ambiente:archivador_create', kwargs={'estante_pk': self.object.pk})
+
+        # Breadcrumbs
+        context['breadcrumbs'] = [
+            {'name': self.object.ambiente.nombre, 'url': reverse_lazy('ambiente:ambiente_detail', kwargs={'pk': self.object.ambiente.pk})},
+            {'name': self.object.nombre, 'active': True}
+        ]
         return context
 
 class EstanteListView(ListView):
@@ -130,6 +200,7 @@ class EstanteListView(ListView):
         context['model_name_plural'] = f'Estantes en {ambiente.nombre}'
         context['headers'] = ['nombre', 'ambiente']
         context['fields'] = ['nombre', 'ambiente']
+        context['detail_url_name'] = 'ambiente:estante_detail'
         context['create_url'] = reverse_lazy('ambiente:estante_create', kwargs={'ambiente_pk': ambiente_id})
         context['update_url_name'] = 'ambiente:estante_update'
         context['delete_url_name'] = 'ambiente:estante_delete'
@@ -180,12 +251,14 @@ class EstanteUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['active_nav'] = 'estantes'
         context['title'] = f'Editar Estante: {self.object.nombre}'
-        context['list_url'] = reverse_lazy('ambiente:estante_list_by_ambiente', kwargs={'pk': self.object.ambiente.pk})
+        context['list_url'] = reverse_lazy('ambiente:estante_detail', kwargs={'pk': self.object.pk})
         return context
 
     def get_success_url(self):
-        return reverse_lazy('ambiente:estante_list_by_ambiente', kwargs={'pk': self.object.ambiente.pk})
+        # Redirige al detalle del estante que se acaba de editar.
+        return reverse_lazy('ambiente:estante_detail', kwargs={'pk': self.object.pk})
 
 class EstanteDeleteView(DeleteView):
     model = Estante
@@ -193,12 +266,14 @@ class EstanteDeleteView(DeleteView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['active_nav'] = 'estantes'
         context['title'] = 'Borrar Estante'
-        context['list_url'] = reverse_lazy('ambiente:estante_list_by_ambiente', kwargs={'pk': self.object.ambiente.pk})
+        context['list_url'] = reverse_lazy('ambiente:estante_detail', kwargs={'pk': self.object.pk})
         return context
 
     def get_success_url(self):
-        return reverse_lazy('ambiente:estante_list_by_ambiente', kwargs={'pk': self.object.ambiente.pk})
+        # Después de borrar, redirige al detalle del ambiente padre.
+        return reverse_lazy('ambiente:ambiente_detail', kwargs={'pk': self.object.ambiente.pk})
 
 class ArchivadorListView(ListView):
     model = Archivador
@@ -215,6 +290,7 @@ class ArchivadorListView(ListView):
         context['model_name_plural'] = f'Archivadores en {estante.nombre}'
         context['headers'] = ['nombre', 'estante']
         context['fields'] = ['nombre', 'estante']
+        context['detail_url_name'] = 'ambiente:archivador_detail'
         context['create_url'] = reverse_lazy('ambiente:archivador_create', kwargs={'estante_pk': estante_id})
         context['update_url_name'] = 'ambiente:archivador_update'
         context['delete_url_name'] = 'ambiente:archivador_delete'
@@ -224,6 +300,41 @@ class ArchivadorListView(ListView):
         return context
     def get_queryset(self):
         return super().get_queryset().filter(estante__id=self.kwargs['pk'])
+
+class ArchivadorDetailView(DetailView):
+    model = Archivador
+    template_name = 'base/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['active_nav'] = 'archivadores'
+        context['title'] = f'Detalle de Archivador: {self.object.nombre}'
+        context['list_url'] = reverse_lazy('ambiente:estante_detail', kwargs={'pk': self.object.estante.pk})
+        context['parent'] = self.object.estante
+        context['update_url_name'] = 'ambiente:archivador_update'
+        context['delete_url_name'] = 'ambiente:archivador_delete'
+
+        # Contexto para la lista de hijos (Archivos)
+        context['children'] = self.object.archivos.all()
+        context['archivo_count'] = self.object.archivos.count()
+        context['child_model_name'] = 'Archivo'
+        context['child_model_name_plural'] = 'Archivos'
+        context['child_headers'] = ['nombre', 'descripción', 'archivo']
+        context['child_fields'] = ['nombre', 'descripcion', 'archivo']
+        context['child_detail_url_name'] = 'ambiente:archivo_detail'
+        context['child_update_url_name'] = 'ambiente:archivo_update'
+        context['child_delete_url_name'] = 'ambiente:archivo_delete'
+        context['child_create_url'] = reverse_lazy('ambiente:archivo_create', kwargs={'archivador_pk': self.object.pk})
+
+        # Breadcrumbs
+        ambiente = self.object.estante.ambiente
+        estante = self.object.estante
+        context['breadcrumbs'] = [
+            {'name': ambiente.nombre, 'url': reverse_lazy('ambiente:ambiente_detail', kwargs={'pk': ambiente.pk})},
+            {'name': estante.nombre, 'url': reverse_lazy('ambiente:estante_detail', kwargs={'pk': estante.pk})},
+            {'name': self.object.nombre, 'active': True}
+        ]
+        return context
 
 class ArchivadorListAllView(ListView):
     model = Archivador
@@ -238,6 +349,7 @@ class ArchivadorListAllView(ListView):
         context['model_name_plural'] = 'Archivadores'
         context['headers'] = ['nombre', 'estante']
         context['fields'] = ['nombre', 'estante']
+        context['detail_url_name'] = 'ambiente:archivador_detail'
         context['create_url'] = reverse_lazy('ambiente:archivador_create_general')
         context['update_url_name'] = 'ambiente:archivador_update'
         context['delete_url_name'] = 'ambiente:archivador_delete'
@@ -283,12 +395,14 @@ class ArchivadorUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['active_nav'] = 'archivadores'
         context['title'] = f'Editar Archivador: {self.object.nombre}'
-        context['list_url'] = reverse_lazy('ambiente:archivador_list_by_estante', kwargs={'pk': self.object.estante.pk})
+        context['list_url'] = reverse_lazy('ambiente:archivador_detail', kwargs={'pk': self.object.pk})
         return context
 
     def get_success_url(self):
-        return reverse_lazy('ambiente:archivador_list_by_estante', kwargs={'pk': self.object.estante.pk})
+        # Redirige al detalle del archivador que se acaba de editar.
+        return reverse_lazy('ambiente:archivador_detail', kwargs={'pk': self.object.pk})
 
 class ArchivadorDeleteView(DeleteView):
     model = Archivador
@@ -296,12 +410,14 @@ class ArchivadorDeleteView(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['active_nav'] = 'archivadores'
         context['title'] = 'Borrar Archivador'
-        context['list_url'] = reverse_lazy('ambiente:archivador_list_by_estante', kwargs={'pk': self.object.estante.pk})
+        context['list_url'] = reverse_lazy('ambiente:archivador_detail', kwargs={'pk': self.object.pk})
         return context
 
     def get_success_url(self):
-        return reverse_lazy('ambiente:archivador_list_by_estante', kwargs={'pk': self.object.estante.pk})
+        # Después de borrar, redirige al detalle del estante padre.
+        return reverse_lazy('ambiente:estante_detail', kwargs={'pk': self.object.estante.pk})
 
 class ArchivoListAllView(ListView):
     model = Archivo
@@ -316,6 +432,7 @@ class ArchivoListAllView(ListView):
         context['model_name_plural'] = 'Archivos'
         context['headers'] = ['nombre', 'archivador', 'archivo']
         context['fields'] = ['nombre', 'archivador', 'archivo']
+        context['detail_url_name'] = 'ambiente:archivo_detail'
         context['create_url'] = reverse_lazy('ambiente:archivo_create_general')
         context['update_url_name'] = 'ambiente:archivo_update'
         context['delete_url_name'] = 'ambiente:archivo_delete'
@@ -336,6 +453,7 @@ class ArchivoListView(ListView):
         context['model_name_plural'] = f'Archivos en {archivador.nombre}'
         context['headers'] = ['nombre', 'archivador', 'archivo'] 
         context['fields'] = ['nombre', 'archivador', 'archivo'] 
+        context['detail_url_name'] = 'ambiente:archivo_detail'
         context['create_url'] = reverse_lazy('ambiente:archivo_create', kwargs={'archivador_pk': archivador_id})
         context['update_url_name'] = 'ambiente:archivo_update'
         context['delete_url_name'] = 'ambiente:archivo_delete'
@@ -343,6 +461,32 @@ class ArchivoListView(ListView):
         return context
     def get_queryset(self):
         return super().get_queryset().filter(archivador__id=self.kwargs['pk'])
+
+class ArchivoDetailView(DetailView):
+    model = Archivo
+    template_name = 'base/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['active_nav'] = 'archivos'
+        context['title'] = f'Detalle de Archivo: {self.object.nombre}'
+        context['list_url'] = reverse_lazy('ambiente:archivador_detail', kwargs={'pk': self.object.archivador.pk})
+        context['parent'] = self.object.archivador
+        context['update_url_name'] = 'ambiente:archivo_update'
+        context['delete_url_name'] = 'ambiente:archivo_delete'
+        context['is_file_detail'] = True # Flag para la plantilla
+
+        # Breadcrumbs
+        archivador = self.object.archivador
+        estante = archivador.estante
+        ambiente = estante.ambiente
+        context['breadcrumbs'] = [
+            {'name': ambiente.nombre, 'url': reverse_lazy('ambiente:ambiente_detail', kwargs={'pk': ambiente.pk})},
+            {'name': estante.nombre, 'url': reverse_lazy('ambiente:estante_detail', kwargs={'pk': estante.pk})},
+            {'name': archivador.nombre, 'url': reverse_lazy('ambiente:archivador_detail', kwargs={'pk': archivador.pk})},
+            {'name': self.object.nombre, 'active': True}
+        ]
+        return context
 
 class ArchivoCreateView(CreateView):
     model = Archivo
@@ -382,12 +526,14 @@ class ArchivoUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['active_nav'] = 'archivos'
         context['title'] = f'Editar Archivo: {self.object.nombre}'
-        context['list_url'] = reverse_lazy('ambiente:archivo_list_by_archivador', kwargs={'pk': self.object.archivador.pk})
+        context['list_url'] = reverse_lazy('ambiente:archivo_detail', kwargs={'pk': self.object.pk})
         return context
 
     def get_success_url(self):
-        return reverse_lazy('ambiente:archivo_list_by_archivador', kwargs={'pk': self.object.archivador.pk})
+        # Redirige al detalle del archivo que se acaba de editar.
+        return reverse_lazy('ambiente:archivo_detail', kwargs={'pk': self.object.pk})
 
 class ArchivoDeleteView(DeleteView):
     model = Archivo
@@ -395,9 +541,11 @@ class ArchivoDeleteView(DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['active_nav'] = 'archivos'
         context['title'] = 'Borrar Archivo'
-        context['list_url'] = reverse_lazy('ambiente:archivo_list_by_archivador', kwargs={'pk': self.object.archivador.pk})
+        context['list_url'] = reverse_lazy('ambiente:archivo_detail', kwargs={'pk': self.object.pk})
         return context
 
     def get_success_url(self):
-        return reverse_lazy('ambiente:archivo_list_by_archivador', kwargs={'pk': self.object.archivador.pk})
+        # Después de borrar, redirige al detalle del archivador padre.
+        return reverse_lazy('ambiente:archivador_detail', kwargs={'pk': self.object.archivador.pk})

@@ -18,7 +18,7 @@
                     <ul class="list-group list-group-flush mb-4">
                         {% for item in ambientes %}
                             <li class="list-group-item">
-                                <a href="{% url 'ambiente:estante_list_by_ambiente' item.pk %}" class="fw-bold text-decoration-none">{{ item.nombre }}</a>
+                                <a href="{% url 'ambiente:ambiente_detail' item.pk %}" class="fw-bold text-decoration-none text-primary-hover">{{ item.nombre }}</a>
                             </li>
                         {% endfor %}
                     </ul>
@@ -29,8 +29,8 @@
                     <ul class="list-group list-group-flush mb-4">
                         {% for item in estantes %}
                             <li class="list-group-item">
-                                <a href="{% url 'ambiente:archivador_list_by_estante' item.pk %}" class="fw-bold text-decoration-none">{{ item.nombre }}</a>
-                                {{ item|get_full_path }}
+                                <a href="{% url 'ambiente:estante_detail' item.pk %}" class="fw-bold text-decoration-none text-primary-hover">{{ item.nombre }}</a>
+                                <br>{{ item|get_full_path }}
                             </li>
                         {% endfor %}
                     </ul>
@@ -41,8 +41,8 @@
                     <ul class="list-group list-group-flush mb-4">
                         {% for item in archivadores %}
                             <li class="list-group-item">
-                                <a href="{% url 'ambiente:archivo_list_by_archivador' item.pk %}" class="fw-bold text-decoration-none">{{ item.nombre }}</a>
-                                {{ item|get_full_path }}
+                                <a href="{% url 'ambiente:archivador_detail' item.pk %}" class="fw-bold text-decoration-none text-primary-hover">{{ item.nombre }}</a>
+                                <br>{{ item|get_full_path }}
                             </li>
                         {% endfor %}
                     </ul>
@@ -54,8 +54,8 @@
                         {% for item in archivos %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
-                                    <span class="fw-bold">{{ item.nombre }}</span>
-                                    {{ item|get_full_path }}
+                                    <a href="{% url 'ambiente:archivo_detail' item.pk %}" class="fw-bold text-decoration-none text-primary-hover">{{ item.nombre }}</a>
+                                    <br>{{ item|get_full_path }}
                                 </div>
                                 <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#archivoModal-{{ item.pk }}">
                                     <i class="fas fa-eye me-1"></i> Ver Archivo

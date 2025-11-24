@@ -1,0 +1,220 @@
+{% extends "base/main.html" %}
+{% load static %}
+{% load app_filters %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Breadcrumbs -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    {% for crumb in breadcrumbs %}
+                        {% with forloop.counter as index %}
+                        {% if crumb.active %}
+                            <li class="breadcrumb-item active" aria-current="page">{{ crumb.name }}</li>
+                        {% else %}
+                            <li class="breadcrumb-item">
+                                <span class="
+                                    {% if index == 1 %}text-primary
+                                    {% elif index == 2 %}text-success
+                                    {% elif index == 3 %}text-info
+                                    {% endif %}">{{ crumb.name }}</span>
+                            </li>
+                        {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">{{ title }}</h4>
+                    <div>
+                        {% if update_url_name %}
+                            <a href="{% url update_url_name object.pk %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit me-1"></i> Editar
+                            </a>
+                        {% endif %}
+                        {% if delete_url_name %}
+                            <a href="{% url delete_url_name object.pk %}" class="btn btn-danger btn-sm ms-2">
+                                <i class="fas fa-trash-alt me-1"></i> Borrar
+                            </a>
+                        {% endif %}
+                        <a href="{{ list_url }}" class="btn btn-outline-secondary btn-sm ms-2">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <p><strong>Nombre:</strong> {{ object.nombre }}</p>
+                            <p><strong>Descripción:</strong> {{ object.descripcion|default:"Sin descripción." }}</p>
+
+                            {% if object.ambiente %}
+                                <p><strong>Ambiente:</strong> <span class="text-primary">{{ object.ambiente.nombre }}</span></p>
+                            {% endif %}
+
+                            {% if object.estante %}
+                                <p><strong>Ubicación:</strong> 
+                                    <span class="text-primary">{{ object.estante.ambiente.nombre }}</span>
+                                    <i class="fas fa-angle-right fa-xs mx-1 text-muted"></i>
+                                    <span class="text-success">{{ object.estante.nombre }}</span>
+                                </p>
+                            {% endif %}
+
+                            {% if object.archivador %}
+                                <p><strong>Ubicación:</strong> 
+                                    <span class="text-primary">{{ object.archivador.estante.ambiente.nombre }}</span>
+                                    <i class="fas fa-angle-right fa-xs mx-1 text-muted"></i>
+                                    <span class="text-success">{{ object.archivador.estante.nombre }}</span>
+                                    <i class="fas fa-angle-right fa-xs mx-1 text-muted"></i>
+                                    <span class="text-info">{{ object.archivador.nombre }}</span>
+                                </p>
+                            {% endif %}
+                            
+                            {% if is_file_detail %}
+                                <p><strong>Archivo:</strong> 
+                                    <span>{{ object.archivo.name|split_path }}</span>
+                                </p>
+                                <hr>
+                                <div class="mt-3 text-center">
+                                    <div class="mb-3">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#archivoModal-{{ object.pk }}">
+                                            <i class="fas fa-eye"></i> Ver Archivo
+                                        </button>
+                                        <a href="{{ object.archivo.url }}" download class="btn btn-success">
+                                            <i class="fas fa-download"></i> Descargar Archivo
+                                        </a>
+                                    </div>
+                                    {% if object.archivo|is_image %}
+                                        <img src="{{ object.archivo|bust_cache_url }}" alt="Previsualización de {{ object.nombre }}" class="img-fluid rounded" style="max-height: 500px;">
+                                    {% else %}
+                                        <p>No hay previsualización disponible para este tipo de archivo.</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if not is_file_detail and children is not None %}
+            <div class="card shadow-sm">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        Contenido: {{ child_model_name_plural }}
+                        <span class="badge bg-secondary">{{ children.count }}</span>
+                    </h5>
+                    <a href="{{ child_create_url }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Crear {{ child_model_name }}
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if children %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    {% for header in child_headers %}
+                                    <th>{{ header|capfirst }}</th>
+                                    {% endfor %}
+                                    <th class="text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in children %}
+                                <tr>
+                                    {% for field in child_fields %}
+                                    <td>
+                                        {% if forloop.first %}
+                                            <a href="{% url child_detail_url_name item.pk %}" class="fw-bold text-decoration-none text-primary-hover">{{ item|get_attribute:field }}</a>
+                                        {% elif field == 'archivo' %}
+                                            {% with file_field=item|get_attribute:field %}
+                                                {% if file_field %}
+                                                    <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#archivoModal-{{ item.pk }}"><i class="fas fa-eye me-1"></i> Ver Archivo</button>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% else %}
+                                            {{ item|get_attribute:field|default_if_none:"" }}
+                                        {% endif %}
+                                    </td>
+                                    {% endfor %}
+                                    <td class="text-end">
+                                        {% if child_update_url_name %}
+                                            <a href="{% url child_update_url_name item.pk %}" class="btn btn-outline-warning btn-sm" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        {% endif %}
+                                        {% if child_delete_url_name %}
+                                            <a href="{% url child_delete_url_name item.pk %}" class="btn btn-outline-danger btn-sm ms-2" title="Borrar">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info text-center" role="alert">
+                        No hay {{ child_model_name_plural|lower }} para mostrar.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+{% if is_file_detail and object.archivo %}
+<div class="modal fade" id="archivoModal-{{ object.pk }}" tabindex="-1" aria-labelledby="archivoModalLabel-{{ object.pk }}" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="archivoModalLabel-{{ object.pk }}">{{ object.nombre }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if object.archivo|is_image %}
+                    <img src="{{ object.archivo|bust_cache_url }}" class="img-fluid" style="max-height: 80vh; margin: auto; display: block;" alt="{{ object.nombre }}">
+                {% else %}
+                    <iframe src="{{ object.archivo|bust_cache_url }}" style="width:100%; height:75vh;" frameborder="0"></iframe>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if child_model_name == 'Archivo' %}
+    {% for item in children %}
+        {% if item.archivo %}
+        <div class="modal fade" id="archivoModal-{{ item.pk }}" tabindex="-1" aria-labelledby="archivoModalLabel-{{ item.pk }}" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="archivoModalLabel-{{ item.pk }}">{{ item.nombre }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% if item.archivo|is_image %}
+                            <img src="{{ item.archivo|bust_cache_url }}" class="img-fluid" style="max-height: 80vh; margin: auto; display: block;" alt="{{ item.nombre }}">
+                        {% else %}
+                            <iframe src="{{ item.archivo|bust_cache_url }}" style="width:100%; height:75vh;" frameborder="0"></iframe>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

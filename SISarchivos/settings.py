@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
 
 
 # Application definition
@@ -140,21 +140,12 @@ LOGIN_URL = reverse_lazy('users:login')
 LOGOUT_URL = reverse_lazy('users:logout')
 LOGOUT_REDIRECT_URL = reverse_lazy('users:login')
 
-#EMAIL_USE_TLS = True
-#EMAIL_HOST = smpt.gmail.com
-#EMAIL_HOST_USER = config('EMAIL_HOST_USER',cast=str)
-#EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD',cast=str)
-#EMAIL_PORT = 587
-
-# /home/debian/Escritorio/Django/3archivo/SISarchivos/SISarchivos/settings.py
-
-# ... (al final del archivo)
-
 # --- CONFIGURACIÓN DE ENVÍO DE CORREO (GMAIL) ---
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'leinadreve001@gmail.com'  # <-- TU CORREO DE GMAIL
-EMAIL_HOST_PASSWORD = 'imas kmzm idxz vcie'  # <-- TU CONTRASEÑA DE APLICACIÓN DE 16 DÍGITOS
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# Estos valores se cargan desde el archivo .env para no exponerlos en el código.
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER)

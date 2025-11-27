@@ -1,23 +1,17 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-custom-nav shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-custom-nav shadow-sm py-1">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+        <a class="navbar-brand d-flex align-items-center py-1 px-2 rounded-3 {% if request.resolver_match.view_name == 'users:home' %}active-brand{% endif %}" href="{% url 'home' %}" style="transition: background-color 0.3s ease;">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-folder-fill me-2 text-warning" viewBox="0 0 16 16">
                 <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3zm-8.322.12C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139z"/>
             </svg>
-            <span>Home</span>
+            <span class="fw-bold">Home</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- Este elemento empuja todo lo demás a la derecha -->
-            <div class="me-auto"></div>
-
-            <!-- Elementos de la derecha -->
-            <div class="d-flex align-items-center">
-                {% if user.is_authenticated %}
-                    <!-- Enlaces de navegación principal -->
-                    <ul class="navbar-nav me-3">
+            {% if user.is_authenticated %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link {% if 'ambiente_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:ambiente_list' %}">Ambientes</a>
                         </li>
@@ -31,11 +25,21 @@
                             <a class="nav-link {% if 'archivo_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'ambiente:archivo_list' %}">Archivos</a>
                         </li>
                     </ul>
-
+            {% else %}
+                <!-- Este elemento empuja todo lo demás a la derecha cuando el usuario no está autenticado -->
+                <div class="me-auto"></div>
+            {% endif %}
+            <!-- Elementos de la derecha -->
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
                     <!-- Buscador -->
                     <form class="d-flex me-3" role="search" method="get" action="{% url 'ambiente:search_results' %}">
-                        <input class="form-control me-2" type="search" name="q" placeholder="Buscar..." aria-label="Search" value="{{ request.GET.q }}">
-                        <button class="btn btn-outline-light" type="submit">Buscar</button>
+                        <div class="input-group">
+                            <input class="form-control" type="search" name="q" placeholder="Buscar..." aria-label="Search" value="{{ request.GET.q }}">
+                            <button class="btn btn-outline-light" type="submit" style="border-left: 0;">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
                     </form>
                 {% endif %}
 
@@ -43,8 +47,8 @@
                 <div class="navbar-nav">
                     {% if user.is_authenticated %}
                         <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                            <a class="btn btn-outline-light dropdown-toggle d-flex align-items-center" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle fa-lg me-2"></i> {{ user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="navbarUserDropdown">
                                 <li>

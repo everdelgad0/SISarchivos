@@ -18,7 +18,7 @@ urlpatterns = [
 
     # urls para ambiente
     path('ambientes/', login_required(AmbienteListView.as_view()), name='ambiente_list'),  
-    path('ambientes/<int:pk>/', permission_required("users.ambiente")(login_required(AmbienteDetailView.as_view())), name='ambiente_detail'),
+    path('ambientes/<int:pk>/', login_required(AmbienteDetailView.as_view()), name='ambiente_detail'),
     path('ambientes/crear/', permission_required("users.ambiente")(login_required(AmbienteCreateView.as_view())), name='ambiente_create'),
     path('ambientes/editar/<int:pk>/', permission_required("users.ambiente")(login_required(AmbienteUpdateView.as_view())), name='ambiente_update'),
     path('ambientes/borrar/<int:pk>/', permission_required("users.ambiente")(login_required(AmbienteDeleteView.as_view())), name='ambiente_delete'),

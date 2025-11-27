@@ -26,12 +26,11 @@
                         </li>
                     </ul>
             {% else %}
-                <!-- Este elemento empuja todo lo demás a la derecha cuando el usuario no está autenticado -->
                 <div class="me-auto"></div>
             {% endif %}
-            <!-- Elementos de la derecha -->
             <div class="d-flex align-items-center">
                 {% if user.is_authenticated %}
+
                     <!-- Buscador -->
                     <form class="d-flex me-3" role="search" method="get" action="{% url 'ambiente:search_results' %}">
                         <div class="input-group">

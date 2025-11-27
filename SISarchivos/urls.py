@@ -27,7 +27,5 @@ urlpatterns = [
     path('users/', include(('apps.users.urls', 'users'), namespace='users')),
 ]
 
-# Configuración para servir archivos de medios en desarrollo
-# Esta configuración debe ir al final para no interferir con las URLs de la aplicación.
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

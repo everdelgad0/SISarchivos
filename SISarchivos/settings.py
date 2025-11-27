@@ -145,3 +145,16 @@ LOGOUT_REDIRECT_URL = reverse_lazy('users:login')
 #EMAIL_HOST_USER = config('EMAIL_HOST_USER',cast=str)
 #EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD',cast=str)
 #EMAIL_PORT = 587
+
+# /home/debian/Escritorio/Django/3archivo/SISarchivos/SISarchivos/settings.py
+
+# ... (al final del archivo)
+
+# --- CONFIGURACIÓN DE ENVÍO DE CORREO (GMAIL) ---
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'leinadreve001@gmail.com'  # <-- TU CORREO DE GMAIL
+EMAIL_HOST_PASSWORD = 'imas kmzm idxz vcie'  # <-- TU CONTRASEÑA DE APLICACIÓN DE 16 DÍGITOS
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

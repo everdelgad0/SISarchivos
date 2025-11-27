@@ -51,6 +51,10 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="navbarUserDropdown">
                                 <li>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-user-cog fa-fw me-2"></i>Mi Perfil</a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
                                     <form action="{% url 'users:logout' %}" method="post" class="d-inline w-100">
                                         {% csrf_token %}
                                         <button type="submit" class="dropdown-item text-danger">

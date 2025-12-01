@@ -29,6 +29,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
 
+# Orígenes de confianza para la protección CSRF
+# Esto es necesario cuando se ejecuta detrás de un proxy o en Docker.
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://127.0.0.1:8000,http://localhost:8000', cast=Csv())
+
 
 # Application definition
 

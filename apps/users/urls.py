@@ -20,5 +20,7 @@ urlpatterns = [
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='auth/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='auth/password_reset_confirm.html',success_url=reverse_lazy('users:password_reset_complete')), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='auth/password_change_done.html'), name='password_reset_complete'),
-    path('change-password/', auth_views.PasswordChangeView.as_view(template_name='auth/change-password.html', success_url=reverse_lazy('users:password_reset_complete')), name='change_password'),
+    path('change-password/', auth_views.PasswordChangeView.as_view(template_name='auth/change-password.html', success_url=reverse_lazy('users:password_change_done')), name='change_password'),
+    path('change-password/done/', auth_views.PasswordChangeDoneView.as_view(template_name='auth/password_change_done.html'), name='password_change_done'),
+    path('profile/', UserProfileView.as_view(), name='profile'),
 ]

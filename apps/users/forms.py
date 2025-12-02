@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from .models import Profile
 
 class RegistroForm(UserCreationForm):
     class Meta:
@@ -29,3 +30,16 @@ class RegistroForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Este correo electrónico ya está en uso. Por favor, utiliza otro.")
         return email
+
+class ProfileUpdateForm(forms.ModelForm):
+    """
+    Formulario para actualizar la foto de perfil.
+    """
+    class Meta:
+        model = Profile
+        fields = ['picture']
+        labels = {'picture': 'Cambiar foto de perfil'}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['picture'].required = False

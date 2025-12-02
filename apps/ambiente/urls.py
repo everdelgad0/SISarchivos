@@ -40,4 +40,5 @@ urlpatterns = [
     path('archivador/<int:archivador_pk>/archivo/crear/', permission_required("users.ambiente", raise_exception=True)(login_required(ArchivoCreateView.as_view())), name='archivo_create'),
     path('archivos/editar/<int:pk>/', permission_required("users.ambiente", raise_exception=True)(login_required(ArchivoUpdateView.as_view())), name='archivo_update'),
     path('archivos/borrar/<int:pk>/', permission_required("users.ambiente", raise_exception=True)(login_required(ArchivoDeleteView.as_view())), name='archivo_delete'),
+    path('archivos/<int:pk>/download/', download_archivo, name='archivo_download'),
 ]

@@ -6,6 +6,9 @@ from django.db.models import Q
 from .models import *
 from .forms import *
 from django.urls import reverse_lazy
+from django.http import FileResponse, Http404
+from django.contrib.auth.decorators import login_required, permission_required
+import os
 
 # Create your views here.
 class HomeView(TemplateView):
@@ -532,3 +535,24 @@ class ArchivoDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('ambiente:archivador_detail', kwargs={'pk': self.object.archivador.pk})
+
+@login_required
+@permission_required('users.archivo', raise_exception=True)
+def download_archivo(request, pk):
+    """
+    Vista protegida para descargar un archivo.
+    Solo los usuarios con el permiso 'users.archivo' pueden descargar.
+    """
+    archivo = get_object_or_404(Archivo, pk=pk)
+    
+    # Asegurarse de que el archivo existe en el sistema de archivos
+    if not archivo.archivo or not os.path.exists(archivo.archivo.path):
+        raise Http404("El archivo no fue encontrado.")
+
+    # FileResponse es la forma recomendada de servir archivos grandes
+    response = FileResponse(open(archivo.archivo.path, 'rb'))
+    
+    # Establecer el nombre del archivo para la descarga
+    response['Content-Disposition'] = f'attachment; filename="{os.path.basename(archivo.archivo.name)}"'
+    
+    return response

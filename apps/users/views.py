@@ -21,7 +21,6 @@ def main(request):
     archivador_count = Archivador.objects.count()
     archivo_count = Archivo.objects.count()
 
-    # Creamos un diccionario de contexto para pasarlo a la plantilla
     context = {
         'ambiente_count': ambiente_count,
         'estante_count': estante_count,
@@ -31,29 +30,21 @@ def main(request):
     return render(request, 'home.html', context)
 
 class UserProfileView(LoginRequiredMixin, UpdateView):
-    """
-    Muestra y actualiza la página de perfil del usuario autenticado.
-    """
     template_name = 'auth/profile.html'
     form_class = ProfileUpdateForm
     success_url = reverse_lazy('users:profile')
 
     def get_object(self):
-        # Devuelve la instancia del perfil del usuario actual, creándola si no existe.
         profile, created = Profile.objects.get_or_create(user=self.request.user)
         return profile
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Añadimos el objeto 'user' explícitamente para mayor claridad en la plantilla
         context['user_data'] = self.request.user
         return context
 
     def form_valid(self, form):
-        # No guardamos el formulario directamente para evitar borrar la imagen.
-        # En su lugar, comprobamos si se subió un nuevo archivo.
         if 'picture' in self.request.FILES:
-            # Si hay un nuevo archivo, lo asignamos al perfil y guardamos el perfil.
             self.object.picture = self.request.FILES['picture']
             self.object.save()
         return super().form_valid(form)

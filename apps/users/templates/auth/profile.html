@@ -34,10 +34,8 @@
                         <div class="col-md-4 text-center align-self-center">                           
                             <form method="post" enctype="multipart/form-data" id="profilePictureForm">
                                 {% csrf_token %}
-                                <!-- Ocultamos el input de archivo, pero lo dejamos funcional -->
                                 <input type="file" name="picture" id="id_picture" accept="image/*" style="display: none;">
                                 
-                                <!-- La etiqueta 'label' ahora envuelve la imagen y activa el input oculto -->
                                 <label for="id_picture" id="profilePictureLabel" style="cursor: pointer;" title="Haz clic para cambiar la foto">
                                     {% if user.profile.picture %}
                                         <img src="{{ user.profile.picture.url }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="Foto de perfil">
@@ -48,7 +46,7 @@
                             </form>
                             <h4 class="card-title mb-1">{{ user_data.get_full_name|default:user_data.username }}</h4>
                             <p class="text-muted mb-2">@{{ user_data.username }}</p>
-                            <span class="badge rounded-pill bg-success-subtle text-success-emphasis border border-success-subtle">Miembro Activo</span>
+                            <span class="badge rounded-pill bg-success">Miembro Activo</span>
                         </div>
                         <div class="col-md-8 ps-md-4">
                             <h5 class="mb-3">Detalles de la Cuenta</h5>
@@ -59,9 +57,14 @@
                                 <li class="list-group-item"><div class="row align-items-center"><div class="col-5"><strong><i class="fas fa-calendar-alt fa-fw me-2 text-muted"></i>Miembro desde</strong></div><div class="col-7 text-muted">{{ user_data.date_joined|date:"d F, Y" }}</div></div></li>
                             </ul>
                             <hr>
-                            <a href="{% url 'users:change_password' %}" class="btn btn-primary">
-                                <i class="fas fa-key me-2"></i>Cambiar Contraseña
-                            </a>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{% url 'users:home' %}" class="btn btn-primary">
+                                    <i class="fas fa-home me-2"></i>Ir a Home
+                                </a>
+                                <a href="{% url 'users:change_password' %}" class="btn btn-primary">
+                                    <i class="fas fa-key me-2"></i>Cambiar Contraseña
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -75,7 +78,6 @@
             const pictureForm = document.getElementById('profilePictureForm');
 
             pictureInput.addEventListener('change', function() {
-                // Cuando el usuario selecciona un archivo, envía el formulario automáticamente.
                 pictureForm.submit();
             });
         });

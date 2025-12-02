@@ -2,9 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Profile(models.Model):
-    """
-    Modelo que extiende el modelo User de Django para añadir campos adicionales.
-    """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     picture = models.ImageField(
         upload_to='users/pictures/', 
@@ -16,7 +13,6 @@ class Profile(models.Model):
     def __str__(self):
         return f'Perfil de {self.user.username}'
 
-# Create your models here.
 class Permisos(models.Model):
     class Meta:
         permissions = [

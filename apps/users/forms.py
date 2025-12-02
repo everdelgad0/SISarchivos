@@ -32,9 +32,6 @@ class RegistroForm(UserCreationForm):
         return email
 
 class ProfileUpdateForm(forms.ModelForm):
-    """
-    Formulario para actualizar la foto de perfil.
-    """
     class Meta:
         model = Profile
         fields = ['picture']

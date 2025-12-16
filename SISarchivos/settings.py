@@ -32,11 +32,12 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 # Orígenes de confianza para la protección CSRF
 # Esto es necesario cuando se ejecuta detrás de un proxy o en Docker.
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:8000",   # localhost
+    "http://127.0.0.1:8000",
     "http://localhost:8000",
-    # Si usas Nginx con otro dominio o IP:
-    # "http://tu_dominio_o_ip",
+    "http://0.0.0.0:8000",  # útil si el contenedor expone 0.0.0.0
+    "http://172.17.0.1:8000",  # IP típica del host visto desde Docker
 ]
+
 
 
 # Application definition

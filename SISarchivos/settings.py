@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv())
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 # Orígenes de confianza para la protección CSRF
 # Esto es necesario cuando se ejecuta detrás de un proxy o en Docker.
